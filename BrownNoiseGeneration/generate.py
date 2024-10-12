@@ -21,9 +21,23 @@ def generate_white_noise(duration, sampling_rate):
   samples = int(duration * sampling_rate)
   return np.random.rand(samples)
 
-  
 # --------------------------------------------------------------------------------------------------- 
-def filter_to_brown_noise3(white_noise, f_cutoff, sampling_rate):
+def smoothTriangle(data, degree):
+    # https://plotly.com/python/smoothing/
+    triangle=np.concatenate((np.arange(degree + 1), np.arange(degree)[::-1])) # up then down
+    smoothed=[]
+
+    for i in range(degree, len(data) - degree * 2):
+        point=data[i:i + len(triangle)] * triangle
+        smoothed.append(np.sum(point)/np.sum(triangle))
+    # Handle boundaries
+    smoothed=[smoothed[0]]*int(degree + degree/2) + smoothed
+    while len(smoothed) < len(data):
+        smoothed.append(smoothed[-1])
+    return smoothed
+    
+# --------------------------------------------------------------------------------------------------- 
+def filter_to_brown_noise3(white_noise, f_cutoff, sampling_rate, smooth=True):
   """
   Filters white noise to generate brown noise using pre-defined filter coefficients.
 
@@ -45,6 +59,8 @@ def filter_to_brown_noise3(white_noise, f_cutoff, sampling_rate):
   # Apply filter using convolution
   brown_noise = np.convolve(white_noise, taps, mode='same')
 
+  if smooth:
+    brown_noise = smoothTriangle(brown_noise, 30)
   return brown_noise
   
 # --------------------------------------------------------------------------------------------------- 

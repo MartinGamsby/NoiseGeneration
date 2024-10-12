@@ -945,7 +945,7 @@ if args.half:
 
 # ---------------------------------------------------------------------------------------------------
 #main(args)
-nb_steps = max( args.videoDuration, 79-2)#42
+nb_steps = 79-2#max( args.videoDuration, 79-2)#42
 from_hz = 639 
 to_hz=0.98275#713#0.975 #0.95
 mp3_name, steps, duration = generate.generate_mp3(duration=(args.videoDuration+(nb_steps+2)*SILENCE_TIME_SEC), from_hz=from_hz, to_hz=to_hz, nb_steps=nb_steps, do_plot=False, initial_steps=[396])
